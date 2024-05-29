@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Estate Date Generator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  input[type="date"],
+  input[type="number"],
+  button {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: calc(100% - 20px);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  button {
+    background-color: #4caf50;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+
+  #output {
+    margin-top: 20px;
+  }
+
+  p {
+    margin: 10px 0;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Real Estate Date Generator</h1>
+  <form id="dateGenerator">
+    <label for="effectiveDate">Effective Date:</label>
+    <input type="date" id="effectiveDate" name="effectiveDate"><br>
+    
+    <label for="inspectionDeadline">Inspection Deadline (days after effective date):</label>
+    <input type="number" id="inspectionDeadline" name="inspectionDeadline"><br>
+    
+    <label for="escrowDeadline">Escrow Deadline (days after effective date):</label>
+    <input type="number" id="escrowDeadline" name="escrowDeadline"><br>
+    
+    <label for="closingDate">Closing Date (days after effective date):</label>
+    <input type="number" id="closingDate" name="closingDate"><br>
+    
+    <label for="loanApplication">Loan Application (days after effective date):</label>
+    <input type="number" id="loanApplication" name="loanApplication"><br>
+    
+    <label for="loanApproval">Loan Approval (days after effective date):</label>
+    <input type="number" id="loanApproval" name="loanApproval"><br>
+    
+    <label for="appraisalContingency">Appraisal Contingency (days prior to closing date):</label>
+    <input type="number" id="appraisalContingency" name="appraisalContingency"><br>
+    
+    <label for="associationApplication">Association Application (days after effective date):</label>
+    <input type="number" id="associationApplication" name="associationApplication"><br>
+    
+    <label for="associationApproval">Association Approval (days prior to closing date):</label>
+    <input type="number" id="associationApproval" name="associationApproval"><br>
+    
+    <button type="button" onclick="generateDates()">Generate Dates</button>
+  </form>
+
+  <div id="output"></div>
+</div>
+
+<script>
+function generateDates() {
+  const effectiveDate = new Date(document.getElementById('effectiveDate').value);
+  let output = '';
+
+  if (document.getElementById('inspectionDeadline').value) {
+    const inspectionDeadline = new Date(effectiveDate);
+    inspectionDeadline.setDate(effectiveDate.getDate() + parseInt(document.getElementById('inspectionDeadline').value));
+    output += `<p>Inspection Deadline: ${formatDate(inspectionDeadline)}</p>`;
+  }
+  
+  if (document.getElementById('escrowDeadline').value) {
+    const escrowDeadline = new Date(effectiveDate);
+    escrowDeadline.setDate(effectiveDate.getDate() + parseInt(document.getElementById('escrowDeadline').value));
+    output += `<p>Escrow Deadline: ${formatDate(escrowDeadline)}</p>`;
+  }
+  
+  if (document.getElementById('closingDate').value) {
+    const closingDate = new Date(effectiveDate);
+    closingDate.setDate(effectiveDate.getDate() + parseInt(document.getElementById('closingDate').value));
+    output += `<p>Closing Date: ${formatDate(closingDate)}</p>`;
+  }
+  
+  if (document.getElementById('loanApplication').value) {
+    const loanApplication = new Date(effectiveDate);
+    loanApplication.setDate(effectiveDate.getDate() + parseInt(document.getElementById('loanApplication').value));
+    output += `<p>Loan Application: ${formatDate(loanApplication)}</p>`;
+  }
+  
+  if (document.getElementById('loanApproval').value) {
+    const loanApproval = new Date(effectiveDate);
+    loanApproval.setDate(effectiveDate.getDate() + parseInt(document.getElementById('loanApproval').value));
+    output += `<p>Loan Approval: ${formatDate(loanApproval)}</p>`;
+  }
+  
+  if (document.getElementById('appraisalContingency').value) {
+    const appraisalContingency = new Date(effectiveDate);
+    appraisalContingency.setDate(new Date(document.getElementById('closingDate').value).getDate() - parseInt(document.getElementById('appraisalContingency').value));
+    output += `<p>Appraisal Contingency: ${formatDate(appraisalContingency)}</p>`;
+  }
+  
+  if (document.getElementById('associationApplication').value) {
+    const associationApplication = new Date(effectiveDate);
+    associationApplication.setDate(effectiveDate.getDate() + parseInt(document.getElementById('associationApplication').value));
+    output += `<p>Association Application: ${formatDate(associationApplication)}</p>`;
+  }
+  
+  if (document.getElementById('associationApproval').value) {
+    const associationApproval = new Date(new Date(document.getElementById('closingDate').value).getTime() - (parseInt(document.getElementById('associationApproval').value) * 24 * 60 * 60 * 1000));
+    output += `<p>Association Approval: ${formatDate(associationApproval)}</p>`;
+  }
+  
+  document.getElementById('output').innerHTML = output;
+}
+
+function formatDate(date) {
+  const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+  return date.toLocaleDateString('en-US', options);
+}
+</script>
+
+</body>
+</html>
